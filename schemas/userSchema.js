@@ -30,12 +30,12 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
     waterRate: {
-        type: Number,
-        default: 1500,
-        min: 0,
-        max: 15000,
-        required: true,
-      },
+      type: Number,
+      default: 1500,
+      min: 0,
+      max: 15000,
+      required: true,
+    },
     // ownerId: {
     //   type: mongoose.Schema.Types.ObjectId,
     //   ref: "user",
@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema(
   },
   { versionKey: false, timestamps: true }
 );
+
+export const updateUserWaterRateSchema = Joi.object({
+  waterRate: Joi.number().max(15000).required(),
+});
 
 const User = model("user", userSchema);
 
