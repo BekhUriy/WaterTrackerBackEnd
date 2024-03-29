@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-  getAllWater,
+//   getAllWater,
   getWaterById,
   addWater,
   updateWater,
@@ -9,7 +9,6 @@ import {
 } from "../../controllers/water-controllers.js";
 // import {
 //   authenticate,
-//   isEmptyBody,
 //   isValidId,
 // } from "../../middleware/index.js";
 import validateBody from "../helpers/validateBody.js";
@@ -22,7 +21,7 @@ const waterRouter = express.Router();
 
 waterRouter.use(authenticate);
 
-waterRouter.get("/", getAllWater);
+// waterRouter.get("/", getAllWater);
 
 waterRouter.get("/:id", isValidId, getWaterById);
 
