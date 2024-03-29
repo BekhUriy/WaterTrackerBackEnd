@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 
 import "dotenv/config";
-import router from "./routes";
+import router from "./routes/index.js";
 
 const app = express();
 
@@ -22,8 +22,8 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-app.listen(8080, () => {
-  console.log("Server is running. Use our API on port: 8080");
-});
+//app.listen(8080, () => {
+//  console.log("Server is running. Use our API on port: 8080");
+//});
 
 export default app;
