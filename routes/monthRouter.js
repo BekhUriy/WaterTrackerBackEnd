@@ -1,0 +1,1 @@
+waterRouter.get("/month", getWaterByMonth);
