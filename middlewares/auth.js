@@ -1,3 +1,4 @@
+
 import jwt from "jsonwebtoken"
 import User from "../schemas/userSchema.js";
 
@@ -31,4 +32,3 @@ export const auth = async (req, res, next) => {
 };
 
 
-   

@@ -1,0 +1,1 @@
+waterRouter.get("/today", getWaterByDate);
