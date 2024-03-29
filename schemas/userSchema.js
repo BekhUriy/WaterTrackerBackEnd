@@ -18,8 +18,8 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: gender,
-      default: "female",
+      enum: ["Prefer not to specify", "Female", "Male"],
+      default: "Prefer not to specify",
     },
     avatarURL: {
       type: String,
@@ -52,6 +52,24 @@ const userSchema = new mongoose.Schema(
   { versionKey: false, timestamps: true }
 );
 
-const User = model("user", userSchema);
+const User = mongoose.model("user", userSchema);
 
 export default User;
+
+export const createUserSchema = Joi.object({
+    email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ua', 'uk', 'org', 'ca'] } })
+        .min(6)
+        .max(30)
+        .trim()
+        .required(),
+    password: Joi.string()
+        .alphanum()
+        .min(8)
+        .max(64)
+        .trim()
+        .required(),
+  gender: Joi.string()
+    .valid("Prefer not to specify", "Female", "Male")
+    .default("Prefer not to specify")
+});
