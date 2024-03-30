@@ -1,13 +1,23 @@
-import { WaterModel } from "../schemas/waterSchema";
+import WaterModel from "../schemas/waterSchema.js";
 
 const getTodayStatistic = async (req, res, next) => {
   const { _id: owner, waterRate } = req.user;
-  const date = new Date();
 
+  const date = new Date();
+  console.log('date', date)
+  const modifiedDate = new Date(date);
+  
+  modifiedDate.setUTCHours(0, 0, 0, 0);
+  const startOfDay = modifiedDate.toISOString();
+  console.log('startDay', startDay)
+  modifiedDate.setUTCHours(23, 59, 59, 999);
+  const endOfDay = modifiedDate.toISOString();
+ console.log('endDay', endDay)
   const filter = {
     owner,
-    date,
+    date: { $gte: startOfDay, $lt: endOfDay },
   };
+
   try {
     const waterRecords = await WaterModel.find(filter, "date amountWater");
 
