@@ -6,7 +6,6 @@ import waterRouter from "./waterRouter.js";
 import todayRouter from "./todayRouter.js";
 import monthRouter from "./monthRouter.js";
 
-
 const router = express.Router();
 
 router.use("/auth", authRouter); 
