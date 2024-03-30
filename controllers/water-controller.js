@@ -21,8 +21,8 @@ export const getWaterById = async (req, res, next) => {
 };
 export const addWater = async (req, res, next) => {
   try {
-    const { _id: owner } = req.user;
-    const result = await WaterModel.create({ ...req.body, owner });
+    const { _id: owner, waterRate } = req.user;
+    const result = await WaterModel.create({ ...req.body, owner, waterRate });
     res.status(201).json(result);
   } catch (error) {
     next(error);
@@ -30,9 +30,13 @@ export const addWater = async (req, res, next) => {
 };
 export const updateWater = async (req, res, next) => {
   try {
-    const { _id: owner } = req.user;
+    const { _id: owner, waterRate } = req.user;
     const { id } = req.params;
-    const result = await WaterModel.findOneAndUpdate({ _id: id, owner }, req.body);
+    const result = await WaterModel.findOneAndUpdate(
+      { _id: id, owner },
+      req.body,
+      waterRate
+    );
     if (!result) {
       throw HttpError(404, `Not found`);
     }
