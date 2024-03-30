@@ -1,4 +1,4 @@
-import { WaterModel } from "../schemas/waterSchema";
+import WaterModel from "../schemas/waterSchema.js";
 
 const getMonthStatictics = async (req, res, next) => {
   const { _id: owner, waterRate } = req.user;

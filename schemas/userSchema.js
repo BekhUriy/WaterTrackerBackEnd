@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: gender,
+      enum: ["male", "female"],
       default: "female",
     },
     avatarURL: {
@@ -56,6 +56,6 @@ export const updateUserWaterRateSchema = Joi.object({
   waterRate: Joi.number().max(15000).required(),
 });
 
-const User = model("user", userSchema);
+const User = mongoose.model("user", userSchema);
 
 export default User;

@@ -1,7 +1,9 @@
-export const authenticate= async (req,res,next)=>{
+const authenticate= async (req,res,next)=>{
     try {
         
     } catch (error) {
         next(error)
     }
 }
+
+export default authenticate;
