@@ -6,7 +6,7 @@ import {
   addWater,
   updateWater,
   deleteWater,
-} from "../../controllers/water-controllers.js";
+} from "../controllers/water-controller.js";
 // import {
 //   authenticate,
 //   isValidId,
@@ -16,6 +16,7 @@ import {
   waterAddSchema,
   waterUpdateSchema,
 } from "../schemas/waterSchema.js";
+import authenticate from "../middlewares/auth.js";
 
 const waterRouter = express.Router();
 
@@ -23,18 +24,24 @@ waterRouter.use(authenticate);
 
 // waterRouter.get("/", getAllWater);
 
-waterRouter.get("/:id", isValidId, getWaterById);
+waterRouter.get("/:id", 
+// isValidId, 
+getWaterById);
 
-waterRouter.post("/", isEmptyBody, validateBody(waterAddSchema), addWater);
+waterRouter.post("/", 
+// isEmptyBody, 
+validateBody(waterAddSchema), addWater);
 
 waterRouter.put(
   "/:id",
-  isValidId,
-  isEmptyBody,
+  // isValidId,
+  // isEmptyBody,
   validateBody(waterUpdateSchema),
   updateWater
 );
 
-waterRouter.delete("/:id", isValidId, deleteWater);
+waterRouter.delete("/:id", 
+// isValidId, 
+deleteWater);
 
 export default waterRouter;

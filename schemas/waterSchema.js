@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Joi from "joi";
-import handlerMongooseError from "../helpers/handleMongooseError.js";
+import handlerMongooseError from "../helpers/handlerMongooseError.js";
+
+
 const waterSchema = new mongoose.Schema(
     {
             date: {
@@ -38,4 +40,6 @@ export const waterUpdateSchema = Joi.object({
   amountWater: Joi.number().min(0).max(5000),
 });
 
-export const WaterModel = mongoose.model("water", waterSchema);
+const WaterModel = mongoose.model("water", waterSchema);
+
+export default WaterModel;
