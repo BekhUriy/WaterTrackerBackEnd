@@ -77,3 +77,16 @@ export const createUserSchema = Joi.object({
     .valid("Prefer not to specify", "Female", "Male")
     .default("Prefer not to specify")
 });
+
+export const updateUserSchema = Joi.object({
+        name: {
+      type: String,
+  },
+      gender: {
+      type: String,
+      enum: ["Prefer not to specify", "Female", "Male"],
+    },
+    avatarURL: {
+      type: String,
+    },
+})
