@@ -1,9 +1,5 @@
-
 import jwt from "jsonwebtoken"
 import User from "../schemas/userSchema.js";
-
-
-
 
 export const auth = async (req, res, next) => {
 
@@ -29,6 +25,7 @@ export const auth = async (req, res, next) => {
         console.error('Error auth:', error);
         res.status(500).json({ message: 'Server error' });
     }
+
 };
 
-
+export default auth;

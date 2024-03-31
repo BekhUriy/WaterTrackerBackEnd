@@ -60,9 +60,6 @@ export const updateUserWaterRateSchema = Joi.object({
   waterRate: Joi.number().max(15000).required(),
 });
 
-
-
-
 export const createUserSchema = Joi.object({
     email: Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ua', 'uk', 'org', 'ca'] } })
