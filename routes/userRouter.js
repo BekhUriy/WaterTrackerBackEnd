@@ -13,6 +13,3 @@ userRouter.patch("/avatar", auth, upload.single('avatar'), uploadAvatar)
 export default userRouter;
 
 
-const userRouter = express.Router();
-
-
