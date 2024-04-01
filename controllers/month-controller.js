@@ -1,41 +1,45 @@
 import WaterModel from "../schemas/waterSchema.js";
 
 const getMonthStatictics = async (req, res, next) => {
-  const { _id: owner, waterRate } = req.user;
-  console.log('req.query', req.body)
+  const { _id: owner} = req.user;
   const { date } = req.body;
-  // console.log('date', date)
 
+
+  const { _id: owner } = req.user;
+  // console.log('req.query', req.query)
+  const { date } = req.query;
   const parsedDate = new Date(date);
+  const month = parsedDate.getUTCMonth();
+  const year = parsedDate.getUTCFullYear();
 
-  const day = parsedDate.getDate();
-  const month = parsedDate.getMonth();
-  const year = parsedDate.getFullYear();
-
-  const firstDayOfMonth = new Date(year, month, 1);
-  const lastDayOfMonth = new Date(year, month + 1, 0);
+  const firstDayOfMonth = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+  const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
 
   const filter = {
     owner,
     date: { $gte: firstDayOfMonth, $lt: lastDayOfMonth },
   };
+
   try {
     const result = await WaterModel.aggregate([
       { $match: filter },
+      { $sort: { date: -1 } }, // Сортуємо документи за спаданням дати (найпізніший документ буде першим)
       {
         $group: {
           _id: { $dayOfMonth: "$date" },
           totalAmountWater: { $sum: "$amountWater" },
+          latestWaterRate: { $first: "$waterRate" }, // Вибираємо перше (останнє) значення waterRate за день
           count: { $sum: 1 },
         },
       },
       {
         $project: {
           day: "$_id",
+          latestWaterRate: 1,
           totalAmountWater: 1,
           count: 1,
           percentage: {
-            $multiply: [{ $divide: ["$totalAmountWater", waterRate] }, 100],
+            $multiply: [{ $divide: ["$totalAmountWater", "$latestWaterRate"] }, 100],
           },
         },
       },
@@ -46,9 +50,11 @@ const getMonthStatictics = async (req, res, next) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     return months[month];
 }
+
+console.log('result', result)
     const monthlyStatistics = result.map((record) => ({
       date: `${record.day}, ${getMonthName(month)}`,
-      dailyNorm: waterRate,
+      dailyNorma: record.latestWaterRate,
       percentage: record.percentage.toFixed(2),
       totalRecords: record.count,
     }));
