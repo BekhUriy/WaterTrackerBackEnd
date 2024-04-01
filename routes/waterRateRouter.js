@@ -7,7 +7,7 @@ import validateBody from "../helpers/validateBody.js";
 const waterRateRouter = express.Router();
 
 waterRateRouter.patch(
-    "/waterrate",
+    "/",
     auth,
     validateBody(updateUserWaterRateSchema),
     waterRate
