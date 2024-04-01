@@ -7,41 +7,39 @@ import {
   updateWater,
   deleteWater,
 } from "../controllers/water-controller.js";
-// import {
-//   authenticate,
-//   isValidId,
-// } from "../../middleware/index.js";
 import validateBody from "../helpers/validateBody.js";
 import {
   waterAddSchema,
   waterUpdateSchema,
 } from "../schemas/waterSchema.js";
-import authenticate from "../middlewares/auth.js";
+import auth from "../middlewares/auth.js";
+import isEmptyBody from "../helpers/isEmptyBody.js";
+import isValidId from "../helpers/isValidId.js";
 
 const waterRouter = express.Router();
 
-waterRouter.use(authenticate);
+waterRouter.use(auth);
 
 // waterRouter.get("/", getAllWater);
 
 waterRouter.get("/:id", 
-// isValidId, 
+isValidId, 
 getWaterById);
 
 waterRouter.post("/", 
-// isEmptyBody, 
+isEmptyBody, 
 validateBody(waterAddSchema), addWater);
 
 waterRouter.put(
   "/:id",
-  // isValidId,
-  // isEmptyBody,
+  isValidId,
+  isEmptyBody,
   validateBody(waterUpdateSchema),
   updateWater
 );
 
 waterRouter.delete("/:id", 
-// isValidId, 
+isValidId, 
 deleteWater);
 
 export default waterRouter;

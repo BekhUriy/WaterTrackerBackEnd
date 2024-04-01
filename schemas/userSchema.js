@@ -54,7 +54,6 @@ const userSchema = new mongoose.Schema(
 
 
 const User = mongoose.model("user", userSchema);
-export default User;
 
 export const updateUserWaterRateSchema = Joi.object({
   waterRate: Joi.number().max(15000).required(),
@@ -77,3 +76,18 @@ export const createUserSchema = Joi.object({
     .valid("Prefer not to specify", "Female", "Male")
     .default("Prefer not to specify")
 });
+
+export const updateUserSchema = Joi.object({
+        name: {
+      type: String,
+  },
+      gender: {
+      type: String,
+      enum: ["Prefer not to specify", "Female", "Male"],
+    },
+    avatarURL: {
+      type: String,
+    },
+})
+
+export default User;

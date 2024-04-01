@@ -1,7 +1,15 @@
 import express from "express";
 
-const userRouter = express.Router();
+import { auth } from "../middlewares/auth.js";
+import { getUserData, updateUser, uploadAvatar } from "../controllers/user-controller.js";
+import upload from "../middlewares/avatarUpload.js";
 
-userRouter.get("/");
+const userRouter = express.Router()
+
+userRouter.patch("/update", auth, upload.single('avatar'), updateUser)
+userRouter.get("/", auth, getUserData)
+userRouter.patch("/avatar", auth, upload.single('avatar'), uploadAvatar)
 
 export default userRouter;
+
+

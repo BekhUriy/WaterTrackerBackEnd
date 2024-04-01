@@ -20,6 +20,10 @@ const waterSchema = new mongoose.Schema(
               ref: "user",
               required: true,
             },
+            waterRate: {
+              type: Number,
+              required: true,
+            },
           },
           { versionKey: false, timestamps: true }
     
@@ -33,6 +37,7 @@ waterSchema.post("save", handlerMongooseError);
 export const waterAddSchema = Joi.object({
   date: Joi.date(),
   amountWater: Joi.number().min(0).max(5000),
+  waterRate: Joi.number().max(15000),
 });
 
 export const waterUpdateSchema = Joi.object({
