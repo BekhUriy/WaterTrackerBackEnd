@@ -83,12 +83,17 @@ export const loginUser = async (req, res) => {
         
         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "30d" })
         await User.findByIdAndUpdate(user._id, { token: token });
-        const message = user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`;
-        res.status(200).json({ message });
+        
+        const responseData = {
+            token,
+            message: user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`,
+        };
+
+        return res.status(200).json(responseData);
     }
     catch (error) {
         console.error('Error login user:', error);
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 }
 
@@ -99,10 +104,10 @@ export const logoutUser = async (req, res) => {
             return res.status(401).json({message: "Logout unsuccessful. Unathorized"})
         }
         await User.findByIdAndUpdate(req.user.id, { token: null })
-        res.status(200).json({ message: "Logout successful" });
+        return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
         console.error('Error login user:', error);
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 }
 
@@ -111,15 +116,15 @@ export const currentUser = async (req, res) => {
         const user = await User.findById(req.user.id)
         if(user){
             const message = user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`;
-            res.status(200).json({ message });
+            return res.status(200).json({ message });
         }
         else {
-            res.status(404).json({message:"Unauthorized"})
+            return res.status(404).json({message:"Unauthorized"})
         }
     }
     catch(error) {
         console.error('Error user:', error);
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 }
 
@@ -201,10 +206,10 @@ export const verifyPasswordChange = async (req, res) => {
         
         await User.updateOne({ verificationToken }, { password: hashedPassword, verificationToken: null, tempPasswordStorage: '' });
         
-        res.status(200).json({ message: "Password changed successfully" });
+        return res.status(200).json({ message: "Password changed successfully" });
     } catch (error) {
         console.log("Password change error", error);
-        res.status(500).json({ message: "Server error" });
+        return res.status(500).json({ message: "Server error" });
     }
 
 
