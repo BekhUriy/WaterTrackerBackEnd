@@ -90,4 +90,43 @@ export const updateUserSchema = Joi.object({
     },
 })
 
+<<<<<<< Updated upstream
 export default User;
+=======
+
+export const passwordUpdateSchema = Joi.object({
+     password: Joi.string()
+        .alphanum()
+        .min(8)
+        .max(64)
+        .trim()
+        .required(),
+})
+
+
+userSchema.pre('save', function(next) {
+  
+  const user = this;
+
+  
+  if (user.verificationToken && user.tempPasswordStorage) {
+    
+    setTimeout(async function() {
+      
+     await User.findOneAndUpdate({ verificationToken: user.verificationToken },
+        { $set: { verificationToken: null, tempPasswordStorage: null } },
+        function(err) {
+          if (err) {
+            console.error("Error updating user:", err);
+          } else {
+            console.log("User fields updated successfully.");
+          }
+        }
+      );}, 300000);
+  }
+
+  next();
+});
+
+export default User;
+>>>>>>> Stashed changes

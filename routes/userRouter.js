@@ -6,7 +6,7 @@ import upload from "../middlewares/avatarUpload.js";
 
 const userRouter = express.Router()
 
-userRouter.patch("/update", auth, upload.single('avatar'), updateUser)
+userRouter.patch("/update", auth, updateUser)
 userRouter.get("/", auth, getUserData)
 userRouter.patch("/avatar", auth, upload.single('avatar'), uploadAvatar)
 

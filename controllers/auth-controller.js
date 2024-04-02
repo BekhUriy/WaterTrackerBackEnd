@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import User from "../schemas/userSchema.js";
+=======
+import  User, { passwordUpdateSchema } from "../schemas/userSchema.js";
+>>>>>>> Stashed changes
 import { createUserSchema } from "../schemas/userSchema.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
