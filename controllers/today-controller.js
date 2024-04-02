@@ -23,12 +23,13 @@ const getTodayStatistic = async (req, res, next) => {
   try {
     const waterRecords = await WaterModel.find(filter, "date amountWater");
 
+    console.log('waterRecords', waterRecords)
     // Сума всіх записів споживання води за день
     const totalWaterConsumption = waterRecords.reduce(
       (acc, record) => acc + record.amountWater,
       0
     );
-
+console.log('waterRate', waterRate)
     //Відсоток кількості спожитої води за день
     const percentageOfWaterConsumption = Math.round(
       (totalWaterConsumption / waterRate) * 100,
@@ -36,7 +37,7 @@ const getTodayStatistic = async (req, res, next) => {
     );
 
     res.json({
-      owner: { id: owner },
+      owner,
       percentageOfWaterConsumption,
       waterRecords,
     });
