@@ -1,10 +1,10 @@
 import Joi from "joi";
 
-export const todayDateSchema = Joi.date()
+const todayDateSchema = Joi.date()
 .max('now')
 .required() ;
 
-export const monthDateSchema = Joi.object({
+const monthDateSchema = Joi.object({
     date: Joi.string()
       .regex(/^\d{4}-\d{2}-\d{2}$/)
       .required()
@@ -27,3 +27,5 @@ export const monthDateSchema = Joi.object({
 //         "string.pattern.base": '"date" must be in the format "yyyy-mm-dd"',
 //       }),
 //   });
+
+export {todayDateSchema, monthDateSchema};
