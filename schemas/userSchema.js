@@ -93,7 +93,6 @@ export const updateUserSchema = Joi.object({
     },
 })
 
-
 export const passwordUpdateSchema = Joi.object({
      password: Joi.string()
         .alphanum()
@@ -127,3 +126,6 @@ userSchema.pre('save', function(next) {
 
   next();
 });
+
+export default User;
+
