@@ -30,12 +30,11 @@ export const addWater = async (req, res, next) => {
 };
 export const updateWater = async (req, res, next) => {
   try {
-    const { _id: owner, waterRate } = req.user;
+    const { _id: owner} = req.user;
     const { id } = req.params;
     const result = await WaterModel.findOneAndUpdate(
       { _id: id, owner },
-      req.body,
-      waterRate
+      req.body
     );
     if (!result) {
       throw HttpError(404, `Not found`);

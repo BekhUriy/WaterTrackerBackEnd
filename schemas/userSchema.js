@@ -36,25 +36,28 @@ const userSchema = new mongoose.Schema(
       max: 15000,
       required: true,
     },
-    // ownerId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "user",
-    // },
-    // verify: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // verificationToken: {
-    //   type: String,
-    //   required: [true, "Verify token is required"],
-    // },
+    verify: {
+        type: Boolean,
+        default: false,
+       },
+    verificationToken: {
+        type: String,
+      required: [true, "Verify token is required"],
+    },
+    tempPasswordStorage: {
+        type: String,
+    },
+          upfatedAt: {
+        type: Date,
+        default: Date.now
+         }
   },
   { versionKey: false, timestamps: true }
 );
 
 
 const User = mongoose.model("user", userSchema);
-
+export default User
 export const updateUserWaterRateSchema = Joi.object({
   waterRate: Joi.number().max(15000).required(),
 });
@@ -89,10 +92,6 @@ export const updateUserSchema = Joi.object({
       type: String,
     },
 })
-
-<<<<<<< Updated upstream
-export default User;
-=======
 
 export const passwordUpdateSchema = Joi.object({
      password: Joi.string()
@@ -129,4 +128,4 @@ userSchema.pre('save', function(next) {
 });
 
 export default User;
->>>>>>> Stashed changes
+

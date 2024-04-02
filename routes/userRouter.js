@@ -10,6 +10,8 @@ userRouter.patch("/update", auth, updateUser)
 userRouter.get("/", auth, getUserData)
 userRouter.patch("/avatar", auth, upload.single('avatar'), uploadAvatar)
 
+
 export default userRouter;
+
 
 

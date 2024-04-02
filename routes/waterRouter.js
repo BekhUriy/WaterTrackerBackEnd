@@ -30,7 +30,7 @@ waterRouter.post("/",
 isEmptyBody, 
 validateBody(waterAddSchema), addWater);
 
-waterRouter.put(
+waterRouter.patch(
   "/:id",
   isValidId,
   isEmptyBody,
