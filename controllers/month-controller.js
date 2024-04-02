@@ -1,12 +1,9 @@
 import WaterModel from "../schemas/waterSchema.js";
 
 const getMonthStatictics = async (req, res, next) => {
-  const { _id: owner} = req.user;
-  const { date } = req.body;
-
-
   const { _id: owner } = req.user;
   // console.log('req.query', req.query)
+  
   const { date } = req.query;
   const parsedDate = new Date(date);
   const month = parsedDate.getUTCMonth();
