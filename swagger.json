@@ -1,0 +1,999 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Simple Inventory API",
+    "description": "API documentation for project WaterЕracker.\n        \nWaterTracker є веб-застосунком, який дозволяє користувачеві стежити за своїм щоденним вживанням води, вести облік своїх порцій випитої води протягом дня.\n        \n**Функціональні можливості:**\n\n- Реєстрація та авторизація користувачів\n- створення та редагування норму води на день\n- облін порції та час вживання води протягом дня\n- редагування та видалення записів порцій води\n- відслідковування відсотку виконання норми \n- перегляд статистику за місяць.\n\nОкрім того, додаток має дружній та зрозумілий інтерфейс користувача, що дозволяє зручно та швидко виконувати всі необхідні дії. Проект також забезпечує безпеку користувачів за допомогою шифрування паролів та ідентифікації за допомогою токенів.\n\n**Стек технологій, що використовується у проекті:**\n\nNode.js - середовище виконання JavaScript на сервері\n\nExpress.js - фреймворк для розробки веб-додатків на Node.js\n\nMongoDB - NoSQL база даних\n\nMongoose - бібліотека для роботи з MongoDB у Node.js\n",
+    "contact": {
+      "email": "you@your-company.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/ZorianaMirchuk/WaterTracker/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User endpoints"
+    },
+    {
+      "name": "WaterRate",
+      "description": "User WaterRate endpoint"
+    },
+    {
+      "name": "Water",
+      "description": "Water endpoint for adding, editing and deleting information about water input"
+    },
+    {
+      "name": "Today",
+      "description": "Endpoint for getting list of water consumption and its percentage according to daily norma for today"
+    }
+  ],
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sign-up new user",
+        "description": "**email** - string, електронна пошта користувача. \n    \n**password** - string, пароль користувача. \n",
+        "operationId": "auth-controller_signup",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUp"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "New User Successfully Registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignUpMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is incorrect / Validation error"
+          },
+          "409": {
+            "description": "Conflict / Email in use"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "SignIn existing user",
+        "description": "**email** - string, електронна пошта користувача. \n    \n**password** - string, пароль користувача. \n",
+        "operationId": "auth-controller_signin",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully signed in"
+          },
+          "400": {
+            "description": "Request is incorrect / Validation error"
+          },
+          "401": {
+            "description": "Email or password is wrong"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout  user",
+        "description": "Ендпоінт /logout використовується для виходу з профілю користувача. Коли користувач натискає кнопку вийти з системи, він робить запит на URL /api/auth/logout з валідним токеном у заголовку Authorization. Сервер перевіряє валідність токена, якщо токен є дійсним, то сесія користувача закривається, токен видаляється і користувач повертається на сторінку входу в систему.\n",
+        "operationId": "auth-controller_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User successfully logged out"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        }
+      }
+    },
+    "/api/auth/current": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get current user info",
+        "description": "Ендпоінт \"current\" використовується для отримання інформації про поточного авторизованого користувача. Цей ендпоінт повертає об'єкт, який містить інформацію про користувача, таку як ім'я, електронна пошта, ідентифікатор користувача тощо.\n\nСервер перевіряє валідність токена, якщо токен є дійсним, то сесія користувача закривається, токен видаляється і користувач повертається на сторінку входу в систему. Якщо токен не є валідним, то сервер повертає статус 401 і повідомляє про невалідність токена.\n",
+        "operationId": "auth-controller_currentUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Logged user returned"
+          },
+          "401": {
+            "description": "Bearer auth failed - Якщо запит не містить дійсний токен або токен вже вичерпав свій термін дії, сервер поверне відповідь з кодом статусу HTTP 401 Unauthorized."
+          }
+        }
+      }
+    },
+    "/api/auth/verify/:verificationToken": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verify registered user",
+        "description": "Ендпоінт для підтвердження емайла користувача і користувача\n",
+        "operationId": "auth-controller_verifyUser",
+        "parameters": [
+          {
+            "name": "verificationToken",
+            "in": "query",
+            "description": "JWT token for authorization",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified"
+          },
+          "404": {
+            "description": "Already verified or user does not exist"
+          }
+        }
+      }
+    },
+    "/api/auth/updatepassword": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Update password",
+        "description": "Ендпоінт для зміни пароля на сторінці користувача\n",
+        "operationId": "auth-controller_updatePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated"
+          },
+          "400": {
+            "description": "Current password is incorrect / Passwords do not match"
+          },
+          "404": {
+            "description": "Already verified or user does not exist"
+          }
+        }
+      }
+    },
+    "/api/auth/update-password-with-verification": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Update password with verification",
+        "description": "Ендпоінт для відправки листа з токеном для підтвердження зміни пароля\n",
+        "operationId": "auth-controller_updatePasswordWithVerification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Verification Email sent"
+          },
+          "400": {
+            "description": "Current password is incorrect / Passwords do not match"
+          },
+          "404": {
+            "description": "Already verified or user does not exist"
+          }
+        }
+      }
+    },
+    "/api/auth/verifypassword/:verificationToken": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verify password change via email",
+        "description": "Ендпоінт для підтвердження зміни пароля. Новий пароль записується і його можна використовувати.\n",
+        "operationId": "auth-controller_verifyPasswordChange",
+        "parameters": [
+          {
+            "name": "verificationToken",
+            "in": "query",
+            "description": "JWT token for authorization",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password changed successfully"
+          },
+          "404": {
+            "description": "Invalid verification token"
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get user data",
+        "description": "Цей ендпоінт використовується для отримання інформації про користувача, зокрема: ім'я, електронну пошту, стать, аватар, денна норма та дані про верифікацію в системі.\n",
+        "operationId": "user-controller_getUserData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Getting user data successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/user/avatar": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Upload user avatar",
+        "description": "За цим ендпоінтом можна звертатися до сервера для оновлення (або завантаження) аватара користувача.\n",
+        "operationId": "user-controller_uploadAvatar",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User avatar successfully uploaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarUploadMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "File not found / File extention is not allow"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/user/update": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update user data",
+        "description": "Ендпоінт /api/user/update використовується для оновлення даних користувача в системі. Цей ендпоінт надає можливість користувачам змінювати свої особисті дані, такі як ім'я та стать. \n",
+        "operationId": "user-controller_updateUse",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User profile successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserDataMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error / Wrong old password"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/waterrate": {
+      "patch": {
+        "tags": [
+          "WaterRate"
+        ],
+        "summary": "Update user Water daily norma",
+        "description": "Цей ендпоінт використовується для оновлення кількості води (денна норма), яку користувач повинен споживати, і записує це значення в об'єкт юзера.\n",
+        "operationId": "waterRate-controller_waterRate",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterRateRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User Water Rate successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterRateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/water": {
+      "post": {
+        "tags": [
+          "Water"
+        ],
+        "summary": "Add new water record",
+        "description": "Ендпоінт \nдля збереження інформації по спожитій воді (кількість в міллілітрах та час, коли була спожита вода)\n",
+        "operationId": "water-controller_addWater",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWaterRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "New Water record successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterRecordInfoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        }
+      }
+    },
+    "/api/water/:{id}": {
+      "get": {
+        "tags": [
+          "Water"
+        ],
+        "summary": "Get Water record by id",
+        "description": "Ендпоінт для отримання інформації про запис по спожитій воді (кількість в міллілітрах та час, коли була спожита вода)\n",
+        "operationId": "water-controller_getWaterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Water record info successfully received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterRecordInfoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Card with ${id} is not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Water"
+        ],
+        "summary": "Delete water record",
+        "description": "Ендпоінт для видалення запису по спожитій воді.\n",
+        "operationId": "water-controller_deleteWater",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Water record deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterRecordDeletion"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Water"
+        ],
+        "summary": "Update water record",
+        "description": "Ендпоінт для редагування інформації про запис по спожитій воді, зоерема інформації про кількість спожитої води в міллілітрах та часу, коли була спожита вода.\n",
+        "operationId": "water-controller_updateWater",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWaterRecordRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Water record successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterRecordInfoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        }
+      }
+    },
+    "/api/today": {
+      "get": {
+        "tags": [
+          "Today"
+        ],
+        "summary": "Get the percentage of consumed water from daily norm and a list of all water consumption records for today",
+        "description": "Ендпоінт для отримання інформації про кількость спожитої води від денної норми користувача у процентах і списку всіх записів споживання води користувачем за поточний день. \n",
+        "operationId": "today-controller_getTodayStatistic",
+        "responses": {
+          "200": {
+            "description": "Today statistics received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayStatistics"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/month/{date}": {
+      "get": {
+        "tags": [
+          "Month"
+        ],
+        "summary": "Get info of daily norma, percentage of consumed water from daily norm and quantity of water records for each day of the selected month",
+        "description": "Ендпоінт для отримання інформації щодо кількості спожитої води відносно денної норми у відсотках за кожен день обранного місяця.\n",
+        "operationId": "today-controller_getMonthStatistic",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Month statistics received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthStatistics"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SignUp": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Qwerty123"
+          }
+        }
+      },
+      "SignUpMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Welcome, new user! Keep yourself healthy with our Water Tracker\""
+          }
+        }
+      },
+      "SignIn": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Qwerty123"
+          }
+        }
+      },
+      "UserData": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "660a9e4d5a3674d8d05107d1"
+          },
+          "email": {
+            "type": "string",
+            "example": "qwerty@gmail.com"
+          },
+          "gender": {
+            "type": "string",
+            "example": "Prefer not to specify"
+          },
+          "avatarURL": {
+            "type": "string",
+            "example": "https://res.cloudinary.com/dbmjh0tun/image/upload/cat-89ecc059-e0d7-4934-b36e-c3a9618afa54_aex5zh"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MGE5ZTRkNWEzNjc0ZDhkMDUxMDdkMSIsImlhdCI6MTcxMTk3MjQyMCwiZXhwIjoxNzE0NTY0NDIwfQ.uie4zryVwOPHuuFdM6A1p1UflOnB3JSLiKM2nxEFErs"
+          },
+          "waterRate": {
+            "type": "number",
+            "example": 1500
+          }
+        }
+      },
+      "AvatarRequestBody": {
+        "required": [
+          "avatar"
+        ],
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "description": "File of avatar",
+            "format": "binary"
+          }
+        }
+      },
+      "AvatarUploadMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Avatar update successful"
+          }
+        }
+      },
+      "UpdateUserRequestBody": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Bob"
+          },
+          "gender": {
+            "type": "string",
+            "example": "Male"
+          }
+        }
+      },
+      "UpdateUserDataMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Update successful"
+          }
+        }
+      },
+      "WaterRateRequestBody": {
+        "type": "object",
+        "properties": {
+          "waterRate": {
+            "type": "number",
+            "example": 2000
+          }
+        }
+      },
+      "WaterRateResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "660a9e4d5a3674d8d05107d1"
+          },
+          "email": {
+            "type": "string",
+            "example": "qwerty@gmail.com"
+          },
+          "gender": {
+            "type": "string",
+            "example": "Prefer not to specify"
+          },
+          "avatarURL": {
+            "type": "string",
+            "example": "https://res.cloudinary.com/dbmjh0tun/image/upload/cat-89ecc059-e0d7-4934-b36e-c3a9618afa54_aex5zh"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MGE5ZTRkNWEzNjc0ZDhkMDUxMDdkMSIsImlhdCI6MTcxMTk3MjQyMCwiZXhwIjoxNzE0NTY0NDIwfQ.uie4zryVwOPHuuFdM6A1p1UflOnB3JSLiKM2nxEFErs"
+          },
+          "waterRate": {
+            "type": "number",
+            "example": 2000
+          }
+        }
+      },
+      "AddWaterRequestBody": {
+        "required": [
+          "amountWater",
+          "time"
+        ],
+        "type": "object",
+        "properties": {
+          "amountWater": {
+            "type": "number",
+            "example": 180
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-01T13:11:47.207Z"
+          }
+        }
+      },
+      "UpdateWaterRecordRequestBody": {
+        "type": "object",
+        "properties": {
+          "amountWater": {
+            "type": "number",
+            "example": 180
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-01T13:11:47.207Z"
+          }
+        }
+      },
+      "WaterRecordInfoResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "660ab2939ae884488cc1116e"
+          },
+          "amountWater": {
+            "type": "number",
+            "example": 180
+          },
+          "owner": {
+            "type": "string",
+            "example": "660a9e4d5a3674d8d05107d1"
+          },
+          "waterRate": {
+            "type": "number",
+            "example": 1900
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-01T13:11:47.207Z"
+          }
+        }
+      },
+      "WaterRecordDeletion": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Delete successfully"
+          }
+        }
+      },
+      "TodayStatistics": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "example": "660a9e4d5a3674d8d05107d1"
+          },
+          "percentageOfWaterConsumption": {
+            "type": "number",
+            "example": 47
+          },
+          "waterRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TodayStatistics_waterRecords"
+            }
+          }
+        }
+      },
+      "MonthStatistics": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/MonthStatistics_inner"
+        }
+      },
+      "UpdatePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "example": "OldPass1"
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "NewPass2"
+          },
+          "repeatPassword": {
+            "type": "string",
+            "example": "NewPass2"
+          }
+        }
+      },
+      "TodayStatistics_waterRecords": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "660c5c293885ee98f6872f88"
+          },
+          "amountWater": {
+            "type": "number",
+            "example": 100
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-02T19:27:37.359Z"
+          }
+        }
+      },
+      "MonthStatistics_inner": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "2024-04-30"
+          },
+          "dailyNorma": {
+            "type": "number",
+            "example": 1500
+          },
+          "percentage": {
+            "type": "string",
+            "example": "76.67"
+          },
+          "totalRecords": {
+            "type": "number",
+            "example": 5
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
