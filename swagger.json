@@ -14,8 +14,8 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/ZorianaMirchuk/WaterTracker/1.0.0",
-      "description": "SwaggerHub API Auto Mocking"
+      "url": "https://watertrackerbackend-uo3w.onrender.com",
+      "description": "Water Tracker Backend"
     }
   ],
   "tags": [
