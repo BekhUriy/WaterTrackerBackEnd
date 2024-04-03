@@ -51,7 +51,7 @@ export const signupUser = async (req, res) => {
         // if (!sendEmail) {
         //     return res.status(404).json({message: "Error sending email. Try again later"})
         // }
-        
+
         await User.create({ email: normalizeEmail, password: hashPassword, verificationToken });
         return res.status(200).json({ message: 'Welcome, new user! Keep yourself healthy with our Water Tracker' });
 
@@ -235,19 +235,19 @@ export const updatePassword = async (req, res) => {
                 if (validation.error) {
                     return res.status(400).json({ message: validation.error.message });
                 }
-                const base = process.env.BASE;
-                console.log(base)
-                const emailOptions = {
-                    from: process.env.EMAIL,
-                    to: email,
-                    subject: "Change password",
-                    html: `<p>Hello! You received this email because you recently changed your password.</p>
-                            <p>We are happy that you continue to use Water Tracker and hope that you have a great time while using our app.</p>
-                            <p>Keep yourself healthy!</p>
-                            <p>Best wishes,</p>
-                            <p>Water Tracker Team</p>`
-                };
-                await sendEmail(emailOptions);
+                // const base = process.env.BASE;
+                // console.log(base)
+                // const emailOptions = {
+                //     from: process.env.EMAIL,
+                //     to: email,
+                //     subject: "Change password",
+                //     html: `<p>Hello! You received this email because you recently changed your password.</p>
+                //             <p>We are happy that you continue to use Water Tracker and hope that you have a great time while using our app.</p>
+                //             <p>Keep yourself healthy!</p>
+                //             <p>Best wishes,</p>
+                //             <p>Water Tracker Team</p>`
+                // };
+                // await sendEmail(emailOptions);
                
                 await User.updateOne({ _id: id }, { verificationToken, tempPasswordStorage: normalizedNewPassword, upfatedAt: Date.now() });
 
