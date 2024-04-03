@@ -29,8 +29,6 @@ const waterSchema = new mongoose.Schema(
     
 )
 
-
-
 waterSchema.post("save", handlerMongooseError);
 
 
