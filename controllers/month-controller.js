@@ -3,7 +3,7 @@ import WaterModel from "../schemas/waterSchema.js";
 const getMonthStatictics = async (req, res, next) => {
   const { _id: owner } = req.user;
   // console.log('req.query', req.query)
-  
+
   const { date } = req.query;
   const parsedDate = new Date(date);
   const month = parsedDate.getUTCMonth();
@@ -36,7 +36,10 @@ const getMonthStatictics = async (req, res, next) => {
           totalAmountWater: 1,
           count: 1,
           percentage: {
-            $multiply: [{ $divide: ["$totalAmountWater", "$latestWaterRate"] }, 100],
+            $multiply: [
+              { $divide: ["$totalAmountWater", "$latestWaterRate"] },
+              100,
+            ],
           },
         },
       },
@@ -44,17 +47,52 @@ const getMonthStatictics = async (req, res, next) => {
     ]);
 
     function getMonthName(month) {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    return months[month];
-}
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      return months[month];
+    }
 
-console.log('result', result)
-    const monthlyStatistics = result.map((record) => ({
-      date: `${record.day}, ${getMonthName(month)}`,
-      dailyNorma: record.latestWaterRate,
-      percentage: record.percentage.toFixed(2),
-      totalRecords: record.count,
-    }));
+    const getLastDayOfMonth = (year, month) => {
+      return new Date(year, month + 1, 0).getDate();
+    };
+
+    console.log("result", result);
+    // const monthlyStatistics = result.map((record) => ({
+    //   date: `${record.day}, ${getMonthName(month)}`,
+    //   dailyNorma: record.latestWaterRate,
+    //   percentage: record.percentage.toFixed(2),
+    //   totalRecords: record.count,
+    // }));
+    const monthlyStatistics = [];
+    for (let day = 1; day <= getLastDayOfMonth(year, month); day++) {
+      const record = result.find((item) => item.day === day);
+      const dailyStatistics = record
+        ? {
+            date: `${day}, ${getMonthName(month)}`,
+            dailyNorma: record.latestWaterRate,
+            percentage: record.percentage.toFixed(2),
+            totalRecords: record.count,
+          }
+        : {
+            date: `${day}, ${getMonthName(month)}`,
+            dailyNorma: 0,
+            percentage: 0,
+            totalRecords: 0,
+          };
+      monthlyStatistics.push(dailyStatistics);
+    }
 
     res.json(monthlyStatistics);
   } catch (error) {
@@ -62,8 +100,7 @@ console.log('result', result)
   }
 };
 
-
-export default {getMonthStatictics}
+export default { getMonthStatictics };
 // const waterRecords = await WaterModel.find(filter, "date amountWater");
 
 // // Розрахунок кількості споживань
