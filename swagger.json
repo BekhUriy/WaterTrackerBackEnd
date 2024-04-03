@@ -637,7 +637,7 @@
         ]
       }
     },
-    "/api/month/:{date}": {
+    "/api/month": {
       "get": {
         "tags": [
           "Month"
@@ -648,12 +648,11 @@
         "parameters": [
           {
             "name": "date",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "style": "simple",
-            "explode": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           }
         ],
