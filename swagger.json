@@ -637,7 +637,7 @@
         ]
       }
     },
-    "/api/month/{date}": {
+    "/api/month/:{date}": {
       "get": {
         "tags": [
           "Month"
