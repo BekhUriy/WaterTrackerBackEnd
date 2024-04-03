@@ -35,22 +35,23 @@ export const signupUser = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 10);
         
 
-        const emailOptions = {
-            from: process.env.EMAIL,
-            to: normalizeEmail,
-            subject: "Verify email",
-            html: `<p>We're happy you're here! Let's get your email address verified:</p> 
-                <button><a href="http://${base}/api/auth/verify/${verificationToken}">Click to Verify Email</a></button>.
-                <p>If you did not register for Water Tracker, we recommend you to ignore this letter.</p>
-                <p>Keep yourself healthy!</p>
-                            <p>Best wishes,</p>
-                            <p>Water Tracker Team</p>`
-        };
+        // const emailOptions = {
+        //     from: process.env.EMAIL,
+        //     to: normalizeEmail,
+        //     subject: "Verify email",
+        //     html: `<p>We're happy you're here! Let's get your email address verified:</p> 
+        //         <button><a href="http://${base}/api/auth/verify/${verificationToken}">Click to Verify Email</a></button>.
+        //         <p>If you did not register for Water Tracker, we recommend you to ignore this letter.</p>
+        //         <p>Keep yourself healthy!</p>
+        //                     <p>Best wishes,</p>
+        //                     <p>Water Tracker Team</p>`
+        // };
 
-        await sendEmail(emailOptions);
-        if (!sendEmail) {
-            return res.status(404).json({message: "Error sending email. Try again later"})
-        }
+        // await sendEmail(emailOptions);
+        // if (!sendEmail) {
+        //     return res.status(404).json({message: "Error sending email. Try again later"})
+        // }
+        
         await User.create({ email: normalizeEmail, password: hashPassword, verificationToken });
         return res.status(200).json({ message: 'Welcome, new user! Keep yourself healthy with our Water Tracker' });
 
