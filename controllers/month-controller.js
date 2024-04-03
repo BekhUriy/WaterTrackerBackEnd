@@ -46,24 +46,6 @@ const getMonthStatictics = async (req, res, next) => {
       { $sort: { day: 1 } },
     ]);
 
-    function getMonthName(month) {
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      return months[month];
-    }
-
     const getLastDayOfMonth = (year, month) => {
       return new Date(year, month + 1, 0).getDate();
     };
@@ -78,15 +60,17 @@ const getMonthStatictics = async (req, res, next) => {
     const monthlyStatistics = [];
     for (let day = 1; day <= getLastDayOfMonth(year, month); day++) {
       const record = result.find((item) => item.day === day);
+      const formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
       const dailyStatistics = record
         ? {
-            date: `${day}, ${getMonthName(month)}`,
+            date: formattedDate,
             dailyNorma: record.latestWaterRate,
             percentage: record.percentage.toFixed(2),
             totalRecords: record.count,
           }
         : {
-            date: `${day}, ${getMonthName(month)}`,
+            date: formattedDate,
             dailyNorma: 0,
             percentage: 0,
             totalRecords: 0,
