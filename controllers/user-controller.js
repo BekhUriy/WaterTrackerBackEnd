@@ -97,3 +97,4 @@ export const uploadAvatar = async (req, res) => {
       console.error(error);
     }
 }
+
