@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "WaterTracker",
-    "description": "API documentation for project WaterЕracker.\n        \nWaterTracker є веб-застосунком, який дозволяє користувачеві стежити за своїм щоденним вживанням води, вести облік своїх порцій випитої води протягом дня.\n        \n**Функціональні можливості:**\n\n- Реєстрація та авторизація користувачів\n- створення та редагування норму води на день\n- облін порції та час вживання води протягом дня\n- редагування та видалення записів порцій води\n- відслідковування відсотку виконання норми \n- перегляд статистику за місяць.\n\nОкрім того, додаток має дружній та зрозумілий інтерфейс користувача, що дозволяє зручно та швидко виконувати всі необхідні дії. Проект також забезпечує безпеку користувачів за допомогою шифрування паролів та ідентифікації за допомогою токенів.\n\n**Стек технологій, що використовується у проекті:**\n\nNode.js - середовище виконання JavaScript на сервері\n\nExpress.js - фреймворк для розробки веб-додатків на Node.js\n\nMongoDB - NoSQL база даних\n\nMongoose - бібліотека для роботи з MongoDB у Node.js\n",
+    "description": "API documentation for project WaterЕracker.\n        \nWaterTracker є веб-застосунком, який дозволяє користувачеві стежити за своїм щоденним вживанням води, вести облік своїх порцій випитої води протягом дня.\n        \n**Функціональні можливості:**\n\n- Реєстрація та авторизація користувачів\n- створювати та редагувати свою норму води на день\n- записувати свої порції та час вживання води протягом дня\n- редагувати та видаляти записи своїх порцій\n- відслідковувати відсоток виконання норми \n- переглядати статистику за місяць.\n\nОкрім того, додаток має дружній та зрозумілий інтерфейс користувача, що дозволяє зручно та швидко виконувати всі необхідні дії. Проект також забезпечує безпеку користувачів за допомогою шифрування паролів та ідентифікації за допомогою токенів.\n\n**Стек технологій, що використовується у проекті:**\n\nNode.js - середовище виконання JavaScript на сервері\n\nExpress.js - фреймворк для розробки веб-додатків на Node.js\n\nMongoDB - NoSQL база даних\n\nMongoose - бібліотека для роботи з MongoDB у Node.js\n",
     "contact": {
       "email": "you@your-company.com"
     },
@@ -101,7 +101,14 @@
         },
         "responses": {
           "200": {
-            "description": "User successfully signed in"
+            "description": "User successfully signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Request is incorrect / Validation error"
@@ -650,6 +657,8 @@
             "name": "date",
             "in": "query",
             "required": true,
+            "style": "form",
+            "explode": true,
             "schema": {
               "type": "string",
               "format": "date"
@@ -724,6 +733,59 @@
           "password": {
             "type": "string",
             "example": "Qwerty123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JSON Web Token (JWT) для автентифікації користувача",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MGUzYTE3OTFhODQ3YTU2NTU5OTk2ZCIsImlhdCI6MTcxMjIwODg1MiwiZXhwIjoxNzE0ODAwODUyfQ.b01y9kzQ5Y7NN1NuO8yfjNu6w3caSQy0xXqKFPLs_9k"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserInfo"
+          },
+          "message": {
+            "type": "string",
+            "description": "Повідомлення для користувача",
+            "example": "Welcome back, seker.pwm@gmail.com."
+          }
+        }
+      },
+      "UserInfo": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Унікальний ідентифікатор користувача",
+            "example": "660e3a1791a847a56559996d"
+          },
+          "email": {
+            "type": "string",
+            "description": "Електронна адреса користувача",
+            "example": "seker.pwm@gmail.com"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "URL аватару користувача (може бути відсутнім)",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "description": "Стать користувача",
+            "example": "Prefer not to specify"
+          },
+          "waterRate": {
+            "type": "integer",
+            "description": "Рекомендована кількість води на день для користувача",
+            "example": 1500
+          },
+          "verify": {
+            "type": "boolean",
+            "description": "Прапорець підтвердження електронної адреси користувача",
+            "example": false
           }
         }
       },
