@@ -750,7 +750,7 @@
           "message": {
             "type": "string",
             "description": "Повідомлення для користувача",
-            "example": "Welcome back, seker.pwm@gmail.com."
+            "example": "Welcome back, user@example.com."
           }
         }
       },
@@ -765,7 +765,7 @@
           "email": {
             "type": "string",
             "description": "Електронна адреса користувача",
-            "example": "seker.pwm@gmail.com"
+            "example": "user@example.com"
           },
           "avatarURL": {
             "type": "string",
