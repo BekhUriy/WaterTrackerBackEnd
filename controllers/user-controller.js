@@ -45,7 +45,7 @@ export const updateUser = async (req, res) => {
 
 export const getUserData = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password', '-tempPasswordStorage');
+        const user = await User.findById(req.user.id).select('-password');
         if (!user) {
             return res.status(401).json({message: "Update unsuccessful. Unathorized"})
         }

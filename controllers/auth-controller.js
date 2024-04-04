@@ -1,4 +1,5 @@
-import User, { passwordUpdateSchema } from "../schemas/userSchema.js";
+
+import  User, { passwordUpdateSchema } from "../schemas/userSchema.js";
 import { createUserSchema } from "../schemas/userSchema.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -34,22 +35,23 @@ export const signupUser = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 10);
         
 
-        const emailOptions = {
-            from: process.env.EMAIL,
-            to: normalizeEmail,
-            subject: "Verify email",
-            html: `<p>We're happy you're here! Let's get your email address verified:</p> 
-                <button><a href="http://${base}/api/auth/verify/${verificationToken}">Click to Verify Email</a></button>.
-                <p>If you did not register for Water Tracker, we recommend you to ignore this letter.</p>
-                <p>Keep yourself healthy!</p>
-                            <p>Best wishes,</p>
-                            <p>Water Tracker Team</p>`
-        };
+        // const emailOptions = {
+        //     from: process.env.EMAIL,
+        //     to: normalizeEmail,
+        //     subject: "Verify email",
+        //     html: `<p>We're happy you're here! Let's get your email address verified:</p> 
+        //         <button><a href="http://${base}/api/auth/verify/${verificationToken}">Click to Verify Email</a></button>.
+        //         <p>If you did not register for Water Tracker, we recommend you to ignore this letter.</p>
+        //         <p>Keep yourself healthy!</p>
+        //                     <p>Best wishes,</p>
+        //                     <p>Water Tracker Team</p>`
+        // };
 
-        await sendEmail(emailOptions);
-        if (!sendEmail) {
-            return res.status(404).json({message: "Error sending email. Try again later"})
-        }
+        // await sendEmail(emailOptions);
+        // if (!sendEmail) {
+        //     return res.status(404).json({message: "Error sending email. Try again later"})
+        // }
+
         await User.create({ email: normalizeEmail, password: hashPassword, verificationToken });
         return res.status(200).json({ message: 'Welcome, new user! Keep yourself healthy with our Water Tracker' });
 
@@ -243,21 +245,25 @@ export const updatePassword = async (req, res) => {
                 if (validation.error) {
                     return res.status(400).json({ message: validation.error.message });
                 }
-                const base = process.env.BASE;
-                console.log(base)
-                const emailOptions = {
-                    from: process.env.EMAIL,
-                    to: email,
-                    subject: "Change password",
-                    html: `<p>Hello! You received this email because you recently changed your password.</p>
-                            <p>We are happy that you continue to use Water Tracker and hope that you have a great time while using our app.</p>
-                            <p>Keep yourself healthy!</p>
-                            <p>Best wishes,</p>
-                            <p>Water Tracker Team</p>`
-                };
-                await sendEmail(emailOptions);
+
                const hashedPassword = await bcrypt.hash(normalizedNewPassword, 10);
                 await User.updateOne({ _id: id }, {password: hashedPassword});
+
+                // const base = process.env.BASE;
+                // console.log(base)
+                // const emailOptions = {
+                //     from: process.env.EMAIL,
+                //     to: email,
+                //     subject: "Change password",
+                //     html: `<p>Hello! You received this email because you recently changed your password.</p>
+                //             <p>We are happy that you continue to use Water Tracker and hope that you have a great time while using our app.</p>
+                //             <p>Keep yourself healthy!</p>
+                //             <p>Best wishes,</p>
+                //             <p>Water Tracker Team</p>`
+                // };
+                // await sendEmail(emailOptions);
+               
+ 
 
                 return res.status(200).json({ message: "Email sent" });
             } else {

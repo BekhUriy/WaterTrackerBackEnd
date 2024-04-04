@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema(
 
 
 const User = mongoose.model("user", userSchema);
-export default User
+
 export const updateUserWaterRateSchema = Joi.object({
   waterRate: Joi.number().max(15000).required(),
 });
@@ -93,7 +93,6 @@ export const updateUserSchema = Joi.object({
     },
 })
 
-
 export const passwordUpdateSchema = Joi.object({
      password: Joi.string()
         .alphanum()
@@ -127,3 +126,6 @@ userSchema.pre('save', function(next) {
 
   next();
 });
+
+export default User;
+

@@ -34,7 +34,8 @@ export const updateWater = async (req, res, next) => {
     const { id } = req.params;
     const result = await WaterModel.findOneAndUpdate(
       { _id: id, owner },
-      req.body
+      req.body,
+      {new:true}
     );
     if (!result) {
       throw HttpError(404, `Not found`);
