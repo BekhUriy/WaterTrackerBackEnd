@@ -85,8 +85,18 @@ export const loginUser = async (req, res) => {
         
         const responseData = {
             token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                avatarURL: user.avatarURL,
+                gender: user.gender,
+                waterRate: user.waterRate,
+                verify: user.verify
+            },
             message: user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`,
         };
+
 
         return res.status(200).json(responseData);
     }
@@ -216,7 +226,7 @@ export const verifyPasswordChange = async (req, res) => {
 
 export const updatePassword = async (req, res) => {
     try {
-        const verificationToken = crypto.randomUUID();
+        
         const { password, newPassword, repeatPassword } = req.body;
         const { id, email } = req.user;
 
@@ -246,8 +256,8 @@ export const updatePassword = async (req, res) => {
                             <p>Water Tracker Team</p>`
                 };
                 await sendEmail(emailOptions);
-               
-                await User.updateOne({ _id: id }, { verificationToken, tempPasswordStorage: normalizedNewPassword, upfatedAt: Date.now() });
+               const hashedPassword = await bcrypt.hash(normalizedNewPassword, 10);
+                await User.updateOne({ _id: id }, {password: hashedPassword});
 
                 return res.status(200).json({ message: "Email sent" });
             } else {
@@ -261,3 +271,71 @@ export const updatePassword = async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 }
+
+export const changePasswordEmail = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log(req.body)
+        const user = await User.findOne({ email })
+        console.log(user)
+        if (!user) {
+            res.status(404).json({ message: `User not found` }) 
+        }
+        const resetToken=crypto.randomUUID();
+            user.resetToken = resetToken;
+            await user.save();
+
+            const link = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+            const emailOptions = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Change password",
+            html: `<p>Hello! If you don't change your password on Water Trecker, please ignore this letter</p> 
+                    <p>If you want to change password,  <button><a href="${link}">Click to Prossed Password Change</a></button>.</p>
+                    <p>Keep yourself healthy!</p>
+                    <p>Best wishes,</p>
+                    <p>Water Tracker Team</p>`
+
+            };
+            await sendEmail(emailOptions);
+            res.status(200).json({ message: `Email sended.` })
+        
+    } catch (error) {
+         console.error('Error sending email:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+export const changePassword = async (req, res) => {
+    try {
+        const { newPassword, repeatPassword } = req.body;
+        const { resettoken } = req.query; 
+        const user = await User.findOne({ resetToken: resettoken });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Invalid or expired token' });
+        }
+
+        const normalizedNewPassword = newPassword.trim();
+        const normalizedRepeatPassword = repeatPassword.trim();
+
+        if (normalizedNewPassword !== normalizedRepeatPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+
+
+        const validation = passwordUpdateSchema.validate({password:normalizedNewPassword});
+        if (validation.error) {
+            return res.status(400).json({ message: validation.error.message });
+        }
+            const id = user._id
+     
+                const hashedPassword = await bcrypt.hash(normalizedNewPassword, 10);
+                await User.updateOne({ _id: id }, {password: hashedPassword, resetToken:''});
+
+        return res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error changing password:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
