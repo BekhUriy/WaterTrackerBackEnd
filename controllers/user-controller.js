@@ -45,12 +45,23 @@ export const updateUser = async (req, res) => {
 
 export const getUserData = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password');
-        if (!user) {
-            return res.status(401).json({message: "Update unsuccessful. Unathorized"})
-        }
-        res.status(200).json({ message: "Getting user data successful", user });
-        
+        const user = await User.findById(req.user.id);
+       
+        const responseData = {
+            token: user.token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                avatarURL: user.avatarURL,
+                gender: user.gender,
+                waterRate: user.waterRate,
+                verify: user.verify
+            },
+            message: user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`,
+        };
+
+        return res.status(200).json(responseData);
         
     } catch (error) {
         console.error('Error getting data:', error);

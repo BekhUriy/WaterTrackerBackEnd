@@ -47,6 +47,9 @@ const userSchema = new mongoose.Schema(
     tempPasswordStorage: {
         type: String,
     },
+    resetToken: {
+      type: String,
+    },
           upfatedAt: {
         type: Date,
         default: Date.now
@@ -108,12 +111,12 @@ userSchema.pre('save', function(next) {
   const user = this;
 
   
-  if (user.verificationToken && user.tempPasswordStorage) {
+  if (user.tempPasswordStorage && user.resetToken) {
     
     setTimeout(async function() {
       
-     await User.findOneAndUpdate({ verificationToken: user.verificationToken },
-        { $set: { verificationToken: null, tempPasswordStorage: null } },
+     await User.findOneAndUpdate({ verificationToken: user.resetToken },
+        { $set: { resetToken: null, tempPasswordStorage: null } },
         function(err) {
           if (err) {
             console.error("Error updating user:", err);
