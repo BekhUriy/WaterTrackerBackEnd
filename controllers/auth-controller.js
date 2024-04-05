@@ -10,29 +10,19 @@ dotenv.config();
 
 export const signupUser = async (req, res) => {
     try {
-        const { email, password, repeatPassword } = req.body;
+        const { email, password } = req.body;
         const normalizeEmail = email.toLowerCase().trim();
         const normalizedPassword = password.trim();
-        const normalizedRepeatPassword = repeatPassword.trim();
         const existingUser = await User.findOne({ email: normalizeEmail });
 
         if (existingUser) {
             return res.status(409).json({ message: "This email is already in use. Please check email or log in" });
         }
 
-        if (normalizedPassword !== normalizedRepeatPassword) {
-            return res.status(409).json({ message: "Passwords don't match" });
-        }
-
-        const validation = createUserSchema.validate({ email: normalizeEmail, password: normalizedPassword });
-
-        if (validation.error) {
-            return res.status(400).json({ message: validation.error.message });
-        }
 
         const verificationToken = crypto.randomUUID();
         const base = process.env.BASE;
-        const hashPassword = await bcrypt.hash(password, 10);
+        const hashPassword = await bcrypt.hash(normalizedPassword, 10);
         
 
         // const emailOptions = {
@@ -110,10 +100,10 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(401).json({message: "Logout unsuccessful. Unathorized"})
-        }
+        // const user = await User.findById(req.user.id);
+        // if (!user) {
+        //     return res.status(401).json({message: "Logout unsuccessful. Unathorized"})
+        // }
         await User.findByIdAndUpdate(req.user.id, { token: null })
         return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
@@ -125,13 +115,13 @@ export const logoutUser = async (req, res) => {
 export const currentUser = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
-        if(user){
+        // if(user){
             const message = user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`;
             return res.status(200).json({ message });
-        }
-        else {
-            return res.status(404).json({message:"Unauthorized"})
-        }
+        // }
+        // else {
+        //     return res.status(404).json({message:"Unauthorized"})
+        // }
     }
     catch(error) {
         console.error('Error user:', error);

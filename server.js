@@ -5,7 +5,7 @@ const { DB_HOST, PORT = 8080 } = process.env;
 mongoose.set("strictQuery", true);
 
 mongoose
-  .connect(DB_HOST)
+  // .connect(DB_HOST)
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running. Use our API on port: ${PORT}`);
