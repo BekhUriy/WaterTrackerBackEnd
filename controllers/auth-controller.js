@@ -124,8 +124,35 @@ export const logoutUser = async (req, res) => {
 };
 
 export const currentUser = async (req, res) => {
-    return res.status(200).json(req.user);
-};
+    try {
+        //const user = await User.findById({_id: req.user._id})
+        // if(user){
+            const responseData = {
+            token: req.user.token,
+            user: {
+                _id: req.user._id,
+                name: req.user.name,
+                email: req.user.email,
+                avatarURL: req.user.avatarURL,
+                gender: req.user.gender,
+                waterRate: req.user.waterRate,
+                verify: req.user.verify
+            },
+            message: req.user.name ? `Welcome back, ${req.user.name}.` : `Welcome back, ${req.user.email}.`,
+        };
+
+
+        return res.status(200).json(responseData);
+        // }
+        // else {
+        //     return res.status(404).json({message:"Unauthorized"})
+        // }
+    }
+    catch(error) {
+        console.error('Error user:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+}
 
 export const verifyUser = async (req, res) => {
     try {
