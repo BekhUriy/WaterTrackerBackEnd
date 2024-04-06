@@ -120,7 +120,7 @@
       }
     },
     "/api/auth/logout": {
-      "get": {
+      "post": {
         "tags": [
           "Auth"
         ],
