@@ -116,8 +116,22 @@ export const currentUser = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
         // if(user){
-            const message = user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`;
-            return res.status(200).json({ message });
+            const responseData = {
+            token: user.token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                avatarURL: user.avatarURL,
+                gender: user.gender,
+                waterRate: user.waterRate,
+                verify: user.verify
+            },
+            message: user.name ? `Welcome back, ${user.name}.` : `Welcome back, ${user.email}.`,
+        };
+
+
+        return res.status(200).json(responseData);
         // }
         // else {
         //     return res.status(404).json({message:"Unauthorized"})
@@ -148,15 +162,14 @@ export const verifyUser = async (req, res) => {
 export const updatePasswordWithVerification = async (req, res) => {
     try {
         const verificationToken = crypto.randomUUID();
-        const { password, newPassword, repeatPassword } = req.body;
+        const { password, newPassword} = req.body;
         const { id, email } = req.user;
 
         const user = await User.findById({ _id: id });
         console.log(user)
         const normalizedPassword = password.trim();
-        const normalizedRepeatPassword = repeatPassword.trim();
         const normalizedNewPassword = newPassword.trim()
-        if (normalizedNewPassword === normalizedRepeatPassword) {
+
             const passwordCompare = await bcrypt.compare(normalizedPassword, user.password);
 
             if (passwordCompare) {
@@ -184,9 +197,7 @@ export const updatePasswordWithVerification = async (req, res) => {
             } else {
                 return res.status(400).json({ message: "Current password is incorrect" });
             }
-        } else {
-            return res.status(400).json({ message: "Passwords do not match" });
-        }
+
     } catch (error) {
         console.log("Verification error", error);
         return res.status(500).json({ message: "Server error" });
@@ -219,23 +230,22 @@ export const verifyPasswordChange = async (req, res) => {
 export const updatePassword = async (req, res) => {
     try {
         
-        const { password, newPassword, repeatPassword } = req.body;
+        const { password, newPassword} = req.body;
         const { id, email } = req.user;
 
         const user = await User.findById({ _id: id });
-        console.log(user)
+
         const normalizedPassword = password.trim();
-        const normalizedRepeatPassword = repeatPassword.trim();
         const normalizedNewPassword = newPassword.trim()
-        if (normalizedNewPassword === normalizedRepeatPassword) {
-            const passwordCompare = await bcrypt.compare(normalizedPassword, user.password);
 
+        const passwordCompare = await bcrypt.compare(normalizedPassword, user.password);
+
+        
             if (passwordCompare) {
-                const validation = passwordUpdateSchema.validate({ password: normalizedNewPassword })
-                if (validation.error) {
-                    return res.status(400).json({ message: validation.error.message });
+                const validate = passwordUpdateSchema.validate({password: normalizedNewPassword})
+                if (validate.error) {
+                    return res.status(401).json({message:"validationn error", error: validate.error.message})
                 }
-
                const hashedPassword = await bcrypt.hash(normalizedNewPassword, 10);
                 await User.updateOne({ _id: id }, {password: hashedPassword});
 
@@ -255,13 +265,10 @@ export const updatePassword = async (req, res) => {
                
  
 
-                return res.status(200).json({ message: "Email sent" });
+                return res.status(200).json({ message: "Succesfuly change password" });
             } else {
                 return res.status(400).json({ message: "Current password is incorrect" });
             }
-        } else {
-            return res.status(400).json({ message: "Passwords do not match" });
-        }
     } catch (error) {
         console.log("Verification error", error);
         return res.status(500).json({ message: "Server error" });
@@ -293,9 +300,9 @@ export const changePasswordEmail = async (req, res) => {
                     <p>Water Tracker Team</p>`
 
             };
+        
             await sendEmail(emailOptions);
             res.status(200).json({ message: `Email sended.` })
-        
     } catch (error) {
          console.error('Error sending email:', error);
         res.status(500).json({ message: 'Server error' });
@@ -304,27 +311,19 @@ export const changePasswordEmail = async (req, res) => {
 
 export const changePassword = async (req, res) => {
     try {
-        const { newPassword, repeatPassword } = req.body;
-        const { resettoken } = req.query; 
-        const user = await User.findOne({ resetToken: resettoken });
+        const { password } = req.body;
+        console.log(password)
+        const { token } = req.query; 
+        console.log(token)
+        const user = await User.findOne({ resetToken: token });
 
         if (!user) {
             return res.status(404).json({ message: 'Invalid or expired token' });
         }
 
-        const normalizedNewPassword = newPassword.trim();
-        const normalizedRepeatPassword = repeatPassword.trim();
+        const normalizedNewPassword = password.trim();
 
-        if (normalizedNewPassword !== normalizedRepeatPassword) {
-            return res.status(400).json({ message: "Passwords do not match" });
-        }
-
-
-        const validation = passwordUpdateSchema.validate({password:normalizedNewPassword});
-        if (validation.error) {
-            return res.status(400).json({ message: validation.error.message });
-        }
-            const id = user._id
+        const id = user._id
      
                 const hashedPassword = await bcrypt.hash(normalizedNewPassword, 10);
                 await User.updateOne({ _id: id }, {password: hashedPassword, resetToken:''});

@@ -12,7 +12,7 @@ import {
   verifyUser,
 } from "../controllers/auth-controller.js";
 import { auth } from "../middlewares/auth.js";
-import { createUserSchema } from "../schemas/userSchema.js";
+import { createUserSchema, passwordUpdateSchema } from "../schemas/userSchema.js";
 import validateBody from "../helpers/validateBody.js";
 
 const authRouter = express.Router();
@@ -27,10 +27,11 @@ authRouter.post("/updatepassword", auth, updatePassword);
 authRouter.post(
   "/update-pasword-with-verification",
   auth,
+  validateBody(passwordUpdateSchema),
   updatePasswordWithVerification
 );
 authRouter.patch("/verifypassword/:verificationToken", verifyPasswordChange);
 authRouter.post("/sendemail", changePasswordEmail);
-authRouter.patch("/reset-password", changePassword);
+authRouter.patch("/reset-password", validateBody(passwordUpdateSchema), changePassword);
 
 export default authRouter;
