@@ -41,9 +41,21 @@ export const signupUser = async (req, res) => {
         // if (!sendEmail) {
         //     return res.status(404).json({message: "Error sending email. Try again later"})
         // }
+         const user = await User.create({ email: normalizeEmail, password: hashPassword, verificationToken });
 
-        await User.create({ email: normalizeEmail, password: hashPassword, verificationToken });
-        return res.status(200).json({ message: 'Welcome, new user! Keep yourself healthy with our Water Tracker' });
+        const payload = {
+            id: user._id, 
+        };
+
+        const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "30d" });
+
+        await User.findByIdAndUpdate(user._id, { token: token });
+
+         return res.status(200).json({ 
+            message: 'Welcome, new user! Keep yourself healthy with our Water Tracker',
+            token,
+            email: normalizeEmail
+        });
 
     } catch (error) {
         console.error('Error registering user:', error);
@@ -114,7 +126,7 @@ export const logoutUser = async (req, res) => {
 
 export const currentUser = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id)
+        const user = await User.findById({_id: req.user._id})
         // if(user){
             const responseData = {
             token: user.token,
