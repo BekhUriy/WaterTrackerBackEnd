@@ -1,7 +1,7 @@
 import WaterModel from "../schemas/waterSchema.js";
 
 const getTodayStatistic = async (req, res, next) => {
-  // console.log('req.user', req.user)
+  console.log('req.user', req.user)
   const { _id: owner, waterRate } = req.user;
 
   const { date } = req.body;
@@ -9,6 +9,7 @@ const getTodayStatistic = async (req, res, next) => {
   const modifiedDate = new Date(date);
  
   // modifiedDate.setUTCHours(0, 0, 0, 0);
+
   const startOfDay = modifiedDate.toISOString();
   console.log('startDay', startOfDay)
   modifiedDate.setUTCHours(23, 59, 59, 999);
