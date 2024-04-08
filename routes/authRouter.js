@@ -23,7 +23,7 @@ authRouter.post("/logout", auth, logoutUser);
 authRouter.get("/current", auth, currentUser);
 authRouter.post("/verify/:verificationToken", verifyUser);
 
-authRouter.post("/updatepassword", auth, updatePassword);
+authRouter.patch("/updatepassword", auth, updatePassword);
 authRouter.patch(
   "/update-pasword-with-verification",
   auth,
