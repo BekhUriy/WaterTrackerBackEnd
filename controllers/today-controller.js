@@ -7,15 +7,13 @@ const getTodayStatistic = async (req, res, next) => {
   const { date } = req.body;
   
   const modifiedDate = new Date(date);
-  console.log('date', date)
-
-
-  modifiedDate.setUTCHours(0, 0, 0, 0);
+ 
+  // modifiedDate.setUTCHours(0, 0, 0, 0);
   const startOfDay = modifiedDate.toISOString();
-  // console.log('startDay', startOfDay)
+  console.log('startDay', startOfDay)
   modifiedDate.setUTCHours(23, 59, 59, 999);
   const endOfDay = modifiedDate.toISOString();
-//  console.log('endDay', endDay)
+ console.log('endDay', endOfDay)
 
   const filter = {
     owner,
@@ -25,13 +23,13 @@ const getTodayStatistic = async (req, res, next) => {
   try {
     const waterRecords = await WaterModel.find(filter, "date amountWater");
 
-    console.log('waterRecords', waterRecords)
+    // console.log('waterRecords', waterRecords)
     // Сума всіх записів споживання води за день
     const totalWaterConsumption = waterRecords.reduce(
       (acc, record) => acc + record.amountWater,
       0
     );
-console.log('waterRate', waterRate)
+// console.log('waterRate', waterRate)
     //Відсоток кількості спожитої води за день
     const percentageOfWaterConsumption = Math.round(
       (totalWaterConsumption / waterRate) * 100,
