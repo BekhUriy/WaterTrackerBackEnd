@@ -41,19 +41,14 @@ const userSchema = new mongoose.Schema(
         default: false,
        },
     verificationToken: {
-        type: String,
-      required: [true, "Verify token is required"],
+        type: String
     },
     tempPasswordStorage: {
         type: String,
     },
     resetToken: {
       type: String,
-    },
-          upfatedAt: {
-        type: Date,
-        default: Date.now
-         }
+    }
   },
   { versionKey: false, timestamps: true }
 );
@@ -106,25 +101,19 @@ export const passwordUpdateSchema = Joi.object({
 })
 
 
-userSchema.pre('save', function(next) {
-  
+userSchema.pre('save', async function(next) {
   const user = this;
 
-  
-  if (user.tempPasswordStorage && user.resetToken) {
-    
-    setTimeout(async function() {
-      
-     await User.findOneAndUpdate({ verificationToken: user.resetToken },
-        { $set: { resetToken: null, tempPasswordStorage: null } },
-        function(err) {
-          if (err) {
-            console.error("Error updating user:", err);
-          } else {
-            console.log("User fields updated successfully.");
-          }
-        }
-      );}, 300000);
+  if (user.tempPasswordStorage || user.resetToken) {
+    await new Promise(resolve => {
+      setTimeout(async () => {
+        user.resetToken = null;
+        user.tempPasswordStorage = null;
+        await user.save();
+        
+        resolve();
+      }, 300000); // 5 minutes in milliseconds
+    });
   }
 
   next();
