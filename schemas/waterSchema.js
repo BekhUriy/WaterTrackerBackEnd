@@ -8,12 +8,6 @@ const waterSchema = new mongoose.Schema(
             date: {
               type: Date,
               default: Date.now,
-        //       get: function(value) {
-        //     return new Date(value).toISOString();
-        // },
-        // set: function(value) {
-        //     return new Date(value);
-        // }
             },
             amountWater: {
               type: Number,
