@@ -24,7 +24,7 @@ authRouter.get("/current", auth, currentUser);
 authRouter.post("/verify/:verificationToken", verifyUser);
 
 authRouter.post("/updatepassword", auth, updatePassword);
-authRouter.post(
+authRouter.patch(
   "/update-pasword-with-verification",
   auth,
   validateBody(passwordUpdateSchema),
