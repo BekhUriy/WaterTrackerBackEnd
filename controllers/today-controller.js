@@ -4,16 +4,16 @@ const getTodayStatistic = async (req, res, next) => {
   console.log('req.user', req.user)
   const { _id: owner, waterRate } = req.user;
 
-  const date = new Date();
-  console.log('date', date)
-  const modifiedDate = new Date(date);
+  const { date } = req.body;
   
-  modifiedDate.setUTCHours(0, 0, 0, 0);
-  const startOfDay = modifiedDate.toISOString();
-  // console.log('startDay', startOfDay)
-  modifiedDate.setUTCHours(23, 59, 59, 999);
-  const endOfDay = modifiedDate.toISOString();
-//  console.log('endDay', endDay)
+let startOfDay = new Date(date);
+let endOfDay = new Date(date);
+
+startOfDay.setHours(0, 0, 0, 0);
+endOfDay.setHours(23, 59, 59, 999);
+
+console.log('startDay', startOfDay) 
+ console.log('endDay', endOfDay)
 
   const filter = {
     owner,
