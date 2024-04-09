@@ -6,16 +6,6 @@ dotenv.config();
 import { v2 as cloudinary } from 'cloudinary';
 
 export const updateUser = async (req, res) => {
-        cloudinary.config({
-        cloud_name: process.env.CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-    })
-    const options = {
-      use_filename: true,
-      unique_filename: true,
-      overwrite: false,
-    };
     try {
         const { name, gender } = req.body
         const normalizedName = name.trim()
@@ -34,8 +24,24 @@ export const updateUser = async (req, res) => {
         }
 
 
-        await User.findByIdAndUpdate(req.user.id, {name: normalizedName, gender}, { new: true } )
-        res.status(200).json({ message: "Update successful" });
+        await User.findByIdAndUpdate(req.user.id, { name: normalizedName, gender })
+        const updatedUser = await User.findById(req.user.id);
+        console.log(updatedUser)
+        const responseData = {
+            
+            user: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                avatarURL: updatedUser.avatarURL,
+                gender: updatedUser.gender,
+                waterRate: updatedUser.waterRate,
+                verify: updatedUser.verify,
+            },
+            message: `Update is successful`,
+        };
+
+         return res.status(200).json(responseData);
         
     } catch (error) {
         console.error('Error updating:', error);
@@ -93,17 +99,33 @@ export const uploadAvatar = async (req, res) => {
             ...options,
                 transformation: [
                 { width: 250, height: 250, gravity: 'faces', crop: 'thumb' },
-                { radius: 'max' }, // Optional: Apply rounded corners
+                { radius: 'max' }, 
             ],});
         const cloudinaryBaseUrl = process.env.CLUDINARY_URL;
         const avatarUrl = cloudinaryBaseUrl + result.public_id;
-        await User.findByIdAndUpdate(req.user.id, { avatarURL: avatarUrl }, { new: true })
+        await User.findByIdAndUpdate(req.user.id, { avatarURL: avatarUrl })
         if (res.status(200)) {
             await fs.unlink(imagePath);
         }
-        res.status(200).json({ message: "Avatar update successful" })
+        const updatedUser = await User.findById(req.user.id);
+        console.log(updatedUser)
+        const responseData = {
+            
+            user: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                avatarURL: updatedUser.avatarURL,
+                gender: updatedUser.gender,
+                waterRate: updatedUser.waterRate,
+                verify: updatedUser.verify,
+            },
+            message: `Update is successful`,
+        };
+
+         return res.status(200).json(responseData);
+
         
-      return result.public_id;
     } catch (error) {
       console.error(error);
     }
