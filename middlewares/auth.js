@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../schemas/userSchema.js";
 
 export const auth = async (req, res, next) => {
+console.log('req', req.body)
 
     const {authorization = ""} = req.headers;
     const [bearer, token] = authorization.split(" ");
