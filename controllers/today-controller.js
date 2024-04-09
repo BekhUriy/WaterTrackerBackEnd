@@ -6,13 +6,13 @@ const getTodayStatistic = async (req, res, next) => {
 
   const { date } = req.body;
   
-  const modifiedDate = new Date(date);
- 
-  // modifiedDate.setUTCHours(0, 0, 0, 0);
-  const startOfDay = modifiedDate.toISOString();
-  console.log('startDay', startOfDay)
-  modifiedDate.setUTCHours(23, 59, 59, 999);
-  const endOfDay = modifiedDate.toISOString();
+let startOfDay = new Date(date);
+let endOfDay = new Date(date);
+
+startOfDay.setHours(0, 0, 0, 0);
+endOfDay.setHours(23, 59, 59, 999);
+
+console.log('startDay', startOfDay) 
  console.log('endDay', endOfDay)
 
   const filter = {

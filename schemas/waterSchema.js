@@ -29,6 +29,12 @@ const waterSchema = new mongoose.Schema(
     
 )
 
+// waterSchema.pre('save', function(next) {
+//   // Коригування дати на 3 години назад перед збереженням
+//   this.date.setHours(this.date.getHours() + 3);
+//   next();
+// })
+
 waterSchema.post("save", handlerMongooseError);
 
 
