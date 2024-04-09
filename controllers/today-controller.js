@@ -27,6 +27,7 @@ console.log('startDay', startOfDay)
       (acc, record) => acc + record.amountWater,
       0
     );
+
     //Відсоток кількості спожитої води за день
     const percentageOfWaterConsumption = Math.round(
       (totalWaterConsumption / waterRate) * 100,
