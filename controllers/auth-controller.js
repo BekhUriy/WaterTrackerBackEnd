@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import crypto from "crypto";
 import sendEmail from "../middlewares/email.js";
-import gravatar from 'gravatar';
+
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ export const signupUser = async (req, res) => {
         const verificationToken = crypto.randomUUID();
         const base = process.env.BASE;
         const hashPassword = await bcrypt.hash(normalizedPassword, 10);
-        let avatarUrl = "https:"+gravatar.url(normalizeEmail, { s: '250', r: 'pg', d: 'identicon' });
+        
         
 
         // const emailOptions = {
@@ -43,7 +43,7 @@ export const signupUser = async (req, res) => {
         //     return res.status(404).json({message: "Error sending email. Try again later"})
         // }
         const user = await User.create(
-            {email: normalizeEmail, password: hashPassword, verificationToken, avatarURL: avatarUrl});
+            {email: normalizeEmail, password: hashPassword, verificationToken});
 
         const payload = {
             id: user._id,
