@@ -1,7 +1,7 @@
 import WaterModel from "../schemas/waterSchema.js";
 
 const getTodayStatistic = async (req, res, next) => {
-  // console.log('req.user', req.user)
+  console.log('req.user', req.user)
   const { _id: owner, waterRate } = req.user;
 
   const { date } = req.body;
