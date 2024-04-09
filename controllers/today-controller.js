@@ -1,10 +1,9 @@
 import WaterModel from "../schemas/waterSchema.js";
 
 const getTodayStatistic = async (req, res, next) => {
-  console.log('req.user', req.user)
   const { _id: owner, waterRate } = req.user;
-
-  const { date } = req.body;
+  const { date } = req.query;
+  console.log('date', date)
   
 let startOfDay = new Date(date);
 let endOfDay = new Date(date);
@@ -23,13 +22,12 @@ console.log('startDay', startOfDay)
   try {
     const waterRecords = await WaterModel.find(filter, "date amountWater");
 
-    console.log('waterRecords', waterRecords)
     // Сума всіх записів споживання води за день
     const totalWaterConsumption = waterRecords.reduce(
       (acc, record) => acc + record.amountWater,
       0
     );
-console.log('waterRate', waterRate)
+
     //Відсоток кількості спожитої води за день
     const percentageOfWaterConsumption = Math.round(
       (totalWaterConsumption / waterRate) * 100,
